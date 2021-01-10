@@ -1,0 +1,14 @@
+.item-container {
+  background-color: #fff;
+  border: 1px solid #000;
+  box-sizing: border-box;
+  min-height: 100px;
+  min-width: 100px;
+  padding: 10px;
+}
+
+.item-container img {
+  background-color: #000;
+  height: 80px;
+  width: 80px;
+}
