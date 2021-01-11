@@ -1,4 +1,4 @@
-import './item.css';
+import './image-item.css';
 
 import React, { Component } from 'react';
 
@@ -14,7 +14,7 @@ interface ItemProperties {
   title: string;
 }
 
-class Item extends Component<ItemProperties> {
+class ImageItem extends Component<ItemProperties> {
   public static defaultProps = {
     imagePath: emptyItem,
   };
@@ -22,10 +22,13 @@ class Item extends Component<ItemProperties> {
   public render(): React.ReactNode {
     return (
       <div className="item-container">
-        <img src={this.props.imagePath} />
+        <img
+          src={this.props.imagePath}
+          alt={this.props.metadata?.breed ?? 'empty'}
+        />
       </div>
     );
   }
 }
 
-export default Item;
+export default ImageItem;

@@ -1,17 +1,58 @@
 import './app.css';
 
-import React, { FunctionComponent, ReactElement } from 'react';
+import { FunctionComponent, ReactElement, useState } from 'react';
 
-import logo from './assets/logo.svg';
-import Item from './components/item';
+import Gallery from './components/gallery';
+import ImageItem from './components/image-item';
+import * as DogAPI from './helpers/dog-api';
+import Item from './types/item';
 
 const App: FunctionComponent = (): ReactElement => {
+  const [currentDog, setCurrentDog] = useState<Item>({});
+  const [items, setItems] = useState<Item[]>([]);
+
+  const handleClick = (): void => {
+    DogAPI.getRandom()
+      .then((image): void => {
+        setCurrentDog({
+          imagePath: image,
+        });
+      })
+      .catch((error): void => {
+        throw error;
+      });
+
+    setItems([
+      {
+        imagePath: 'something.jpg',
+      },
+      {
+        imagePath: 'something-else.jpg',
+      },
+    ]);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Item id="something" title="title" />
+        <div
+          onClick={(): void => {
+            handleClick();
+          }}
+        >
+          Get a Random Dog
+        </div>
       </header>
+      <section>
+        <ImageItem
+          id="something"
+          title="title"
+          imagePath={currentDog.imagePath}
+        />
+      </section>
+      <section>
+        <Gallery title="The title" items={items} />
+      </section>
     </div>
   );
 };
