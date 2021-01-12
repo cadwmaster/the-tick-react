@@ -6,15 +6,14 @@ import Gallery from './components/gallery';
 import ImageItem from './components/image-item';
 import * as Analyzer from './helpers/analizer';
 import * as DogAPI from './helpers/dog-api';
-import Breed from './types/breed';
-import Item from './types/item';
 import Prediction from './types/prediction';
 
 const App: FunctionComponent = (): ReactElement => {
-  const [currentDog, setCurrentDog] = useState<Item>({});
-  const [items, setItems] = useState<Item[]>([]);
-  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [currentImage, setCurrentImage] = useState<string>();
+  const [items, setItems] = useState<string[]>([]);
+  const [breeds, setBreeds] = useState<string[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [currentBreed, setCurrentBreed] = useState<string>('');
 
   useEffect((): void => {
     DogAPI.getListBreed()
@@ -24,56 +23,43 @@ const App: FunctionComponent = (): ReactElement => {
       });
   }, []);
 
-  const handleClick = (): void => {
+  const handleClick = async (): Promise<void> => {
     setPredictions([]);
-    DogAPI.getRandom()
-      .then((image): void => {
-        setCurrentDog({ imagePath: image });
-      })
-      .catch((error): void => {
-        throw error;
-      });
-
-    setItems([
-      {
-        imagePath: 'something.jpg',
-      },
-      {
-        imagePath: 'something-else.jpg',
-      },
-    ]);
+    setItems([]);
+    setCurrentBreed('');
+    const fetchedImage = await DogAPI.getRandom();
+    setCurrentImage(fetchedImage);
   };
 
-  const handleLoad = (element: HTMLImageElement): void => {
-    Analyzer.analyzeImage(element)
-      .then(setPredictions)
-      .catch((error): void => {
-        throw error;
-      });
+  const handleLoad = async (element: HTMLImageElement): Promise<void> => {
+    const fetchedPredictions = await Analyzer.analyzeImage(element);
+    setPredictions(fetchedPredictions);
+    const filterPredictions = Analyzer.filterResults(
+      fetchedPredictions,
+      breeds,
+    );
+
+    if (filterPredictions.length > 0) {
+      setCurrentBreed(filterPredictions[0]);
+      const fetchedItems = await DogAPI.getByBreed(filterPredictions[0]);
+      setItems(fetchedItems);
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <div
-          onClick={(): void => {
-            handleClick();
-          }}
-        >
-          Get a Random Dog
-        </div>
+        <div onClick={handleClick}>Get a Random Dog</div>
       </header>
       <section>
         <ImageItem
-          id="something"
-          title="title"
-          imagePath={currentDog.imagePath}
+          imagePath={currentImage}
           predictions={predictions}
           onLoad={handleLoad}
         />
       </section>
       <section>
-        <Gallery title="The title" items={items} />
+        <Gallery title={`Breed: ${currentBreed}`} items={items} />
       </section>
     </div>
   );

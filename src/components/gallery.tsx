@@ -1,11 +1,9 @@
 import './gallery.css';
 
-import { FunctionComponent, ReactElement } from 'react';
-
-import Item from '../types/item';
+import { FunctionComponent, ReactElement, useEffect } from 'react';
 
 interface Properties {
-  items: Item[];
+  items: string[];
   title: string;
 }
 
@@ -15,7 +13,7 @@ const Gallery: FunctionComponent<Properties> = (properties): ReactElement => {
       <h1>{properties.title}</h1>
       {properties.items.map(
         (item, index): ReactElement => (
-          <div key={index}>{item.imagePath}</div>
+          <img key={index} src={item} />
         ),
       )}
     </div>

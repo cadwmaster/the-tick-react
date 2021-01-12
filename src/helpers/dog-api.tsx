@@ -1,5 +1,3 @@
-import Breed from '../types/breed';
-
 interface RandomResponse {
   message: string;
   status?: string;
@@ -13,15 +11,36 @@ const getRandom = async (): Promise<string> => {
     .then((jsonResponse): string => jsonResponse.message);
 };
 
-const getListBreed = async (): Promise<Breed[]> => {
+const getListBreed = async (): Promise<string[]> => {
   return fetch(`${url}/breeds/list/all`).then(
-    async (response): Promise<Breed[]> => {
+    async (response): Promise<string[]> => {
       const jsonResponse = await response.json();
-      const keys = Object.keys(jsonResponse.message);
+      const mainBreeds: string[] = Object.keys(jsonResponse.message);
+      const subBreeds: string[] = [];
 
-      return keys.map((key): Breed => ({ name: key }));
+      mainBreeds.forEach((key: string): void => {
+        if (jsonResponse.message[key].length > 0) {
+          jsonResponse.message[key].forEach((subBreed: string): void => {
+            subBreeds.push(`${subBreed} ${key}`);
+          });
+        }
+      });
+
+      return [...mainBreeds, ...subBreeds];
     },
   );
 };
 
-export { getRandom, getListBreed };
+const getByBreed = async (breed: string): Promise<string[]> => {
+  const parsedBreed = breed.split(' ').reverse().join('/');
+
+  return fetch(`${url}/breed/${parsedBreed}/images`).then(
+    async (response): Promise<string[]> => {
+      const jsonResponse = await response.json();
+
+      return Object.values(jsonResponse.message);
+    },
+  );
+};
+
+export { getRandom, getListBreed, getByBreed };
