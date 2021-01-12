@@ -14,8 +14,8 @@ const Gallery: FunctionComponent<Properties> = (properties): ReactElement => {
     <div className="gallery">
       <h1>{properties.title}</h1>
       {properties.items.map(
-        (item): ReactElement => (
-          <div>{item.imagePath}</div>
+        (item, index): ReactElement => (
+          <div key={index}>{item.imagePath}</div>
         ),
       )}
     </div>

@@ -1,22 +1,34 @@
 import './app.css';
 
-import { FunctionComponent, ReactElement, useState } from 'react';
+import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 
 import Gallery from './components/gallery';
 import ImageItem from './components/image-item';
+import * as Analyzer from './helpers/analizer';
 import * as DogAPI from './helpers/dog-api';
+import Breed from './types/breed';
 import Item from './types/item';
+import Prediction from './types/prediction';
 
 const App: FunctionComponent = (): ReactElement => {
   const [currentDog, setCurrentDog] = useState<Item>({});
   const [items, setItems] = useState<Item[]>([]);
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+
+  useEffect((): void => {
+    DogAPI.getListBreed()
+      .then(setBreeds)
+      .catch((error): void => {
+        throw error;
+      });
+  }, []);
 
   const handleClick = (): void => {
+    setPredictions([]);
     DogAPI.getRandom()
       .then((image): void => {
-        setCurrentDog({
-          imagePath: image,
-        });
+        setCurrentDog({ imagePath: image });
       })
       .catch((error): void => {
         throw error;
@@ -30,6 +42,14 @@ const App: FunctionComponent = (): ReactElement => {
         imagePath: 'something-else.jpg',
       },
     ]);
+  };
+
+  const handleLoad = (element: HTMLImageElement): void => {
+    Analyzer.analyzeImage(element)
+      .then(setPredictions)
+      .catch((error): void => {
+        throw error;
+      });
   };
 
   return (
@@ -48,6 +68,8 @@ const App: FunctionComponent = (): ReactElement => {
           id="something"
           title="title"
           imagePath={currentDog.imagePath}
+          predictions={predictions}
+          onLoad={handleLoad}
         />
       </section>
       <section>
