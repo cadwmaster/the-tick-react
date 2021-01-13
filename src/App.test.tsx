@@ -7,7 +7,7 @@ describe('app', (): void => {
   it('renders learn react link', (): void => {
     expect.hasAssertions();
     render(<App />);
-    const linkElement = screen.getByText(/learn react/iu);
+    const linkElement = screen.getByText(/Get a Random Dog/iu);
     expect(linkElement).toBeInTheDocument();
   });
 });

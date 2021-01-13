@@ -10,10 +10,10 @@ import Prediction from './types/prediction';
 
 const App: FunctionComponent = (): ReactElement => {
   const [currentImage, setCurrentImage] = useState<string>();
+  const [currentBreed, setCurrentBreed] = useState<string>('');
   const [items, setItems] = useState<string[]>([]);
   const [breeds, setBreeds] = useState<string[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
-  const [currentBreed, setCurrentBreed] = useState<string>('');
 
   useEffect((): void => {
     DogAPI.getListBreed()
@@ -23,10 +23,14 @@ const App: FunctionComponent = (): ReactElement => {
       });
   }, []);
 
-  const handleClick = async (): Promise<void> => {
+  const initialize = (): void => {
     setPredictions([]);
     setItems([]);
     setCurrentBreed('');
+  };
+
+  const handleClick = async (): Promise<void> => {
+    initialize();
     const fetchedImage = await DogAPI.getRandom();
     setCurrentImage(fetchedImage);
   };
