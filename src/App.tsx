@@ -29,6 +29,13 @@ const App: FunctionComponent = (): ReactElement => {
     setCurrentBreed('');
   };
 
+  const handleInputFileChange = (selectorFiles: FileList | null): void => {
+    if (selectorFiles !== null) {
+      const objectURL = window.URL.createObjectURL(selectorFiles[0]);
+      setCurrentImage(objectURL);
+    }
+  };
+
   const handleClick = async (): Promise<void> => {
     initialize();
     const fetchedImage = await DogAPI.getRandom();
@@ -53,6 +60,14 @@ const App: FunctionComponent = (): ReactElement => {
   return (
     <div className="App">
       <header className="App-header">
+        <div>
+          <input
+            type="file"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
+              handleInputFileChange(event.target.files);
+            }}
+          />
+        </div>
         <div onClick={handleClick}>Get a Random Dog</div>
       </header>
       <section>
