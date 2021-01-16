@@ -48,7 +48,7 @@ class App extends Component<object, State> {
             </div>
           </div>
           <div>Or</div>
-          <div className="button" onClick={this.handleClick}>
+          <div id="random-button" className="button" onClick={this.handleClick}>
             Get a Random Dog
           </div>
         </header>

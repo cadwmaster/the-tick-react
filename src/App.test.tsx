@@ -70,7 +70,7 @@ it('handleClick is triggered', async () => {
   expect.hasAssertions();
   const { container } = render(<App />);
 
-  const target = container.querySelector('.random-button') as TargetElement;
+  const target = container.querySelector('#random-button') as TargetElement;
   userEvent.click(target);
 
   await waitFor(() => {
@@ -124,7 +124,7 @@ it('handleLoad is triggered', (done) => {
   const { container } = render(<App />);
 
   const randomButton = container.querySelector(
-    '.random-button',
+    '#random-button',
   ) as TargetElement;
   const imageElement = container.querySelector(
     '.image-container img',
