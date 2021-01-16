@@ -1,14 +1,10 @@
+/* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent, { TargetElement } from '@testing-library/user-event';
 import { MockedResponse, rest } from 'msw';
 import { setupServer } from 'msw/node';
+
 import * as Analizer from './helpers/analizer';
 jest.mock('./helpers/analizer');
 
@@ -20,7 +16,6 @@ const mockfilterResults = Analizer.filterResults as jest.MockedFunction<
 >;
 
 import App from './app';
-
 import Prediction from './types/prediction';
 const server = setupServer(
   rest.get(
@@ -109,8 +104,10 @@ it('handleInputFileChange is triggered', async () => {
 it('handleLoad is triggered', (done) => {
   expect.hasAssertions();
 
+  const delay = 100;
+
   mockAnalyzeImage.mockImplementation(
-    (): Promise<Prediction[]> => {
+    async (): Promise<Prediction[]> => {
       return Promise.resolve([
         {
           className: 'african',
@@ -136,85 +133,40 @@ it('handleLoad is triggered', (done) => {
   userEvent.click(randomButton);
 
   new Promise((resolve) => {
-    setTimeout(resolve, 100);
+    setTimeout(resolve, delay);
   })
-    .then(() => {
+    .then(async () => {
       return new Promise((resolve) => {
         fireEvent(imageElement, new Event('load'));
         expect(imageElement.getAttribute('src')).toBe('image.jpg');
-        setTimeout(resolve, 100);
+        setTimeout(resolve, delay);
       });
     })
-    .then(() => {
+    .then(async () => {
       const gallery = container.querySelector('.gallery');
       expect(gallery?.querySelector('h1')?.textContent).toBe(
         'Breed: afghan hound',
       );
       expect(gallery?.querySelectorAll('img')).toHaveLength(2);
-      done();
-    });
-});
 
-it('handleLoad is triggered', (done) => {
-  expect.hasAssertions();
-
-  mockAnalyzeImage.mockImplementation(
-    (): Promise<Prediction[]> => {
-      return Promise.resolve([
-        {
-          className: 'african',
-          probability: 10,
-        },
-      ]);
-    },
-  );
-
-  mockfilterResults.mockImplementation(() => {
-    return ['afghan hound'];
-  });
-
-  const { container } = render(<App />);
-
-  const randomButton = container.querySelector(
-    '.random-button',
-  ) as TargetElement;
-  const imageElement = container.querySelector(
-    '.image-container img',
-  ) as HTMLElement;
-
-  userEvent.click(randomButton);
-
-  new Promise((resolve) => {
-    setTimeout(resolve, 100);
-  })
-    .then(() => {
-      return new Promise((resolve) => {
-        fireEvent(imageElement, new Event('load'));
-        expect(imageElement.getAttribute('src')).toBe('image.jpg');
-        setTimeout(resolve, 100);
-      });
-    })
-    .then(() => {
-      const gallery = container.querySelector('.gallery');
-      expect(gallery?.querySelector('h1')?.textContent).toBe(
-        'Breed: afghan hound',
-      );
-      expect(gallery?.querySelectorAll('img')).toHaveLength(2);
       return Promise.resolve(true);
     })
-    .then(() => {
+    .then(async () => {
       return new Promise((resolve) => {
         mockfilterResults.mockImplementation(() => {
           return [];
         });
 
         fireEvent(imageElement, new Event('load'));
-        setTimeout(resolve, 200);
+        setTimeout(resolve, delay);
       });
     })
     .then(() => {
       const gallery = container.querySelector('.gallery');
       expect(gallery?.querySelectorAll('img')).toHaveLength(0);
       done();
+    })
+    .catch((error) => {
+      throw error;
     });
 });
