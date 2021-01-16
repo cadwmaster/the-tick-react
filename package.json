@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "coverage": "react-scripts test --coverage",
+    "coverage": "react-scripts test --coverage --watchAll=false",
     "lint": "run-p lint:css lint:ts",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:css:fix": "stylelint --fix 'src/**/*.css'",
@@ -82,5 +82,12 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/index.tsx",
+      "/src/types"
+    ]
   }
 }

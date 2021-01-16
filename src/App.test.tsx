@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent, { TargetElement } from '@testing-library/user-event';
