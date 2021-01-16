@@ -38,6 +38,10 @@ const Gallery: FunctionComponent<Properties> = (properties): ReactElement => {
     );
   }
 
+  if (properties.items.length === 0) {
+    return <div className="gallery"></div>;
+  }
+
   return (
     <div className="gallery">
       <h1>{properties.title}</h1>

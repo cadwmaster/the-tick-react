@@ -42,10 +42,13 @@ class App extends Component<object, State> {
                 className="file"
                 onChange={this.handleInputFileChange}
               />
-              <label htmlFor="file">Select file</label>
+              <label htmlFor="file" className="button">
+                Select a file
+              </label>
             </div>
           </div>
-          <div className="random-button" onClick={this.handleClick}>
+          <div>Or</div>
+          <div className="button" onClick={this.handleClick}>
             Get a Random Dog
           </div>
         </header>

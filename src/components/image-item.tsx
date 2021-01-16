@@ -23,7 +23,11 @@ class ImageItem extends Component<ItemProperties> {
       this.props.imagePath === undefined ? messages.empty : messages.loading;
 
     return (
-      <div className="item-container">
+      <div
+        className={`item-container ${
+          showPredictions ? 'with-predictions' : ''
+        }`}
+      >
         <div className="image-container">
           <img
             src={this.props.imagePath ?? emptyItem}
