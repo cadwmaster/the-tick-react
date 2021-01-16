@@ -7,7 +7,7 @@ import Prediction from '../types/prediction';
 
 interface ItemProperties {
   imagePath?: string;
-  onLoad: (event: HTMLImageElement) => void;
+  onLoad?: (event: HTMLImageElement) => void;
   predictions: Prediction[];
 }
 
@@ -19,7 +19,8 @@ const messages: { empty: string; loading: string } = {
 class ImageItem extends Component<ItemProperties> {
   public render(): React.ReactNode {
     const showPredictions = this.props.predictions.length > 0;
-    const showEmpty = this.props.imagePath === undefined;
+    const emptyMessage =
+      this.props.imagePath === undefined ? messages.empty : messages.loading;
 
     return (
       <div className="item-container">
@@ -42,9 +43,7 @@ class ImageItem extends Component<ItemProperties> {
             </ul>
           </div>
         ) : (
-          <div className="message-container">
-            {showEmpty ? messages.empty : messages.loading}
-          </div>
+          <div className="message-container">{emptyMessage}</div>
         )}
       </div>
     );
@@ -53,7 +52,7 @@ class ImageItem extends Component<ItemProperties> {
   private readonly notifyParent = (event: SyntheticEvent): void => {
     const element = event.target as HTMLImageElement;
 
-    if (this.props.imagePath !== undefined) {
+    if (this.props.imagePath !== undefined && this.props.onLoad !== undefined) {
       this.props.onLoad(element);
     }
   };

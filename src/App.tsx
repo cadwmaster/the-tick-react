@@ -1,6 +1,6 @@
 import './app.css';
 
-import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { ChangeEvent, Component } from 'react';
 
 import Gallery from './components/gallery';
 import ImageItem from './components/image-item';
@@ -8,80 +8,122 @@ import * as Analyzer from './helpers/analizer';
 import * as DogAPI from './helpers/dog-api';
 import Prediction from './types/prediction';
 
-const App: FunctionComponent = (): ReactElement => {
-  const [currentImage, setCurrentImage] = useState<string>();
-  const [currentBreed, setCurrentBreed] = useState<string>('');
-  const [items, setItems] = useState<string[]>([]);
-  const [breeds, setBreeds] = useState<string[]>([]);
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
+interface State {
+  breeds: string[];
+  currentBreed: string;
+  currentImage?: string;
+  items: string[];
+  loading: boolean;
+  predictions: Prediction[];
+}
 
-  useEffect((): void => {
-    DogAPI.getListBreed()
-      .then(setBreeds)
-      .catch((error): void => {
-        throw error;
-      });
-  }, []);
+class App extends Component<object, State> {
+  private constructor(properties: object) {
+    super(properties);
+    this.state = {
+      breeds: [],
+      currentBreed: '',
+      currentImage: undefined,
+      items: [],
+      loading: false,
+      predictions: [],
+    };
+  }
 
-  const initialize = (): void => {
-    setPredictions([]);
-    setItems([]);
-    setCurrentBreed('');
+  public render(): React.ReactNode {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <div className="file-container">
+            <div className="file-input">
+              <input
+                type="file"
+                id="file"
+                className="file"
+                onChange={this.handleInputFileChange}
+              />
+              <label htmlFor="file">Select file</label>
+            </div>
+          </div>
+          <div className="random-button" onClick={this.handleClick}>
+            Get a Random Dog
+          </div>
+        </header>
+        <section>
+          <ImageItem
+            imagePath={this.state.currentImage}
+            predictions={this.state.predictions}
+            onLoad={this.handleLoad}
+          />
+        </section>
+        <section>
+          <Gallery
+            title={`Breed: ${this.state.currentBreed}`}
+            items={this.state.items}
+            loading={this.state.loading}
+          />
+        </section>
+      </div>
+    );
+  }
+
+  private readonly handleClick = async (): Promise<void> => {
+    this.initialize();
+    const fetchedImage = await DogAPI.getRandom();
+
+    this.setState({
+      currentImage: fetchedImage,
+    });
   };
 
-  const handleInputFileChange = (selectorFiles: FileList | null): void => {
+  private readonly handleInputFileChange = (event: ChangeEvent): void => {
+    const target = event.target as HTMLInputElement;
+    const selectorFiles = target.files;
+
+    this.initialize();
+
     if (selectorFiles !== null) {
       const objectURL = window.URL.createObjectURL(selectorFiles[0]);
-      setCurrentImage(objectURL);
+      this.setState({ currentImage: objectURL });
     }
   };
 
-  const handleClick = async (): Promise<void> => {
-    initialize();
-    const fetchedImage = await DogAPI.getRandom();
-    setCurrentImage(fetchedImage);
-  };
+  private readonly handleLoad = async (
+    element: HTMLImageElement,
+  ): Promise<void> => {
+    this.setState({ items: [] });
 
-  const handleLoad = async (element: HTMLImageElement): Promise<void> => {
+    if (this.state.breeds.length === 0) {
+      const breeds = await DogAPI.getListBreed();
+      this.setState({ breeds });
+    }
+
     const fetchedPredictions = await Analyzer.analyzeImage(element);
-    setPredictions(fetchedPredictions);
+    this.setState({ predictions: fetchedPredictions });
+
     const filterPredictions = Analyzer.filterResults(
       fetchedPredictions,
-      breeds,
+      this.state.breeds,
     );
 
     if (filterPredictions.length > 0) {
-      setCurrentBreed(filterPredictions[0]);
+      this.setState({ currentBreed: filterPredictions[0] });
       const fetchedItems = await DogAPI.getByBreed(filterPredictions[0]);
-      setItems(fetchedItems);
+      this.setState({
+        items: fetchedItems,
+        loading: false,
+      });
     }
   };
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <input
-            type="file"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
-              handleInputFileChange(event.target.files);
-            }}
-          />
-        </div>
-        <div onClick={handleClick}>Get a Random Dog</div>
-      </header>
-      <section>
-        <ImageItem
-          imagePath={currentImage}
-          predictions={predictions}
-          onLoad={handleLoad}
-        />
-      </section>
-      <section>
-        <Gallery title={`Breed: ${currentBreed}`} items={items} />
-      </section>
-    </div>
-  );
-};
+  private readonly initialize = (): void => {
+    this.setState({
+      currentBreed: '',
+      currentImage: undefined,
+      loading: true,
+      predictions: [],
+    });
+  };
+}
 
 export default App;

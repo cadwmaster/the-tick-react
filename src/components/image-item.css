@@ -7,8 +7,14 @@
   padding: 10px;
 }
 
-.item-container img {
-  background-color: #000;
-  height: 80px;
-  width: 80px;
+.item-container .image-container {
+  height: 200px;
+  margin: auto;
+  width: 200px;
+}
+
+.item-container .image-container img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }

@@ -4,6 +4,14 @@ import * as mobilenet from '@tensorflow-models/mobilenet';
 
 import Prediction from '../types/prediction';
 
+const analyzeImage = async (image: HTMLImageElement): Promise<Prediction[]> => {
+  return mobilenet.load().then(
+    async (model: mobilenet.MobileNet): Promise<Prediction[]> => {
+      return model.classify(image);
+    },
+  );
+};
+
 const filterResults = (
   predictions: Prediction[],
   dataSet: string[],
@@ -14,7 +22,9 @@ const filterResults = (
 
     predictionItem.forEach((word): void => {
       const cleanWord = word.toLowerCase().trim();
-      const found = dataSet.find((element): boolean => element === cleanWord);
+      const found = dataSet.find(
+        (element): boolean => element.toLowerCase() === cleanWord,
+      );
 
       if (found !== undefined) {
         results.push(found);
@@ -23,14 +33,6 @@ const filterResults = (
   });
 
   return results;
-};
-
-const analyzeImage = async (image: HTMLImageElement): Promise<Prediction[]> => {
-  return mobilenet.load().then(
-    async (model: mobilenet.MobileNet): Promise<Prediction[]> => {
-      return model.classify(image);
-    },
-  );
 };
 
 export { analyzeImage, filterResults };

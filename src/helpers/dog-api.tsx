@@ -38,7 +38,7 @@ const getByBreed = async (breed: string): Promise<string[]> => {
     async (response): Promise<string[]> => {
       const jsonResponse = await response.json();
 
-      return Object.values(jsonResponse.message);
+      return jsonResponse.message;
     },
   );
 };
