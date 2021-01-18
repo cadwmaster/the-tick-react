@@ -12,7 +12,7 @@ interface ItemProperties {
 }
 
 const messages: { empty: string; loading: string } = {
-  empty: 'Upload an image of a dog or click Get Lucky',
+  empty: 'Upload an image of a dog or click Get Random',
   loading: 'The image is been analyzed wait a couple of seconds',
 };
 
@@ -33,6 +33,7 @@ class ImageItem extends Component<ItemProperties> {
             src={this.props.imagePath ?? emptyItem}
             onLoad={this.notifyParent}
             crossOrigin="anonymous"
+            loading="eager"
           />
         </div>
         {showPredictions ? (

@@ -49,7 +49,7 @@ const Gallery: FunctionComponent<Properties> = (properties): ReactElement => {
         {properties.items.map(
           (item, index): ReactElement => (
             <div key={index} className="image-container">
-              <img src={item} width="200" />
+              <img loading="lazy" src={item} width="200" height="200" />
             </div>
           ),
         )}

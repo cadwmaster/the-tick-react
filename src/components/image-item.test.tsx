@@ -27,7 +27,7 @@ it('renders without predictions', (): void => {
   const { container } = render(<ImageItem predictions={[]} />);
 
   expect(container.querySelector('.message-container')?.textContent).toBe(
-    'Upload an image of a dog or click Get Lucky',
+    'Upload an image of a dog or click Get Random',
   );
 });
 

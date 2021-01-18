@@ -25,6 +25,10 @@
   width: 200px;
 }
 
+.item-container.with-predictions .image-container {
+  margin-right: 10px;
+}
+
 .item-container .image-container img {
   height: 100%;
   object-fit: cover;
@@ -37,7 +41,9 @@
 }
 
 .item-container .predictions-container {
-  min-width: 200px;
+  margin-left: 0;
+  margin-right: auto;
+  width: 400px;
 }
 
 .predictions-container h2 {
