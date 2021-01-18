@@ -25,7 +25,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### `npm run coverage`
 
-Launches the test runner with the coverage flat so you can get the report
+Launches the test runner with the coverage flag so you can get the report.\
 
 ### `npm run build`
 
